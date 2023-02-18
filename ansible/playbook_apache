@@ -1,0 +1,34 @@
+
+---
+
+- name: Install Apache
+  hosts: apache
+  become: yes
+
+  tasks:
+  - name: Install Apache
+    apt:
+      name: apache2
+      update_cache: yes
+
+  - name: Install PHP
+    apt:
+      name: ['php','php-fpm','php-common','php-cli','php-curl']
+      state: latest
+
+  - name: Install MySQL
+    package:
+       name: "{{item}}"
+       state: present
+       update_cache: yes
+    loop:
+       - mysql-server
+       - mysql-client 
+       - python3-mysqldb
+       - libmysqlclient-dev
+
+  - name: Allow port 80 Apache
+    ufw:
+      rule: allow
+      port: 80
+      proto: tcp
